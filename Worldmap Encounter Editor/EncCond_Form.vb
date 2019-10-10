@@ -1,10 +1,11 @@
 ﻿Public Class EncCond_Form
+
     Private texbox As TextBox
     Private combox As ComboBox
 
-    Private IfType() As String = {"Global", "Player", "Time Day"}
-    Private OprCon() As String = {"==", "<=", ">=", "<", ">", "&"}
-    Private PlStats() As String = {"Level", "Age"}
+    Private ReadOnly IfType As String() = {"Global", "Player", "Time Day"}
+    Private ReadOnly OprCon As String() = {"==", "<=", ">=", "<", ">", "&"}
+    Private ReadOnly PlStats As String() = {"Level", "Age"}
 
     Friend Sub Ini_Load(ByVal IfCond As String)
         Dim z, x, y As Integer
@@ -45,7 +46,7 @@
         Dim x, c As Integer
         x = e.X
         'узнать на каком столбце был клик
-        c = GetListViewColClick(sender, x)
+        c = GetFunction.GetListViewColClick(sender, x)
         If c = -1 Then Exit Sub
         Select Case c
             Case 0 'type
@@ -67,7 +68,7 @@
                 combox = New ComboBox
                 combox.Name = "InputComBox"
                 If ListView1.FocusedItem.Text = IfType(0) Then
-                    combox.Items.AddRange(GlobalVar)
+                    combox.Items.AddRange(GlobalVar.ToArray)
                 ElseIf ListView1.FocusedItem.Text = IfType(1) Then
                     combox.Items.AddRange(PlStats)
                 Else

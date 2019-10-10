@@ -5,6 +5,15 @@
     Private ItemSel As Boolean
     Private Type As Boolean = False
 
+    Friend Sub TilesAddList(ByVal x_y As String, ByVal indx As Integer, ByRef i As Integer)
+        Dim sLine As String() = GetFunction.ParamGetValueWM(x_y, indx).Split(",")
+        ListView1.Items.Add(x_y)
+        ListView1.Items(i).SubItems.AddRange(sLine)
+        ListView1.Items(i).UseItemStyleForSubItems = False
+        ListView1.Items(i).BackColor = Color.LemonChiffon 'Color.FromArgb(230, 230, 230)
+        i += 1
+    End Sub
+
     'save todo
     Private Sub Button1_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Button1.Click
         Button1.Enabled = False
@@ -15,7 +24,7 @@
         Dim x, c As Integer
         x = e.X
         'узнать на каком столбце был клик
-        c = GetListViewColClick(sender, x)
+        c = GetFunction.GetListViewColClick(sender, x)
         'Or c = 0 запрет на редактирование первой колонки
         If c = -1 Then Exit Sub
         Select Case c
@@ -29,8 +38,8 @@
                 combox.Location = New Point(x, ListView1.Items(ListView1.FocusedItem.Index).Bounds.Location.Y - 4)
                 AddHandler combox.Leave, AddressOf Me.InputComBoxExit
                 AddHandler combox.KeyDown, AddressOf Me.InputKeyDown
-                For n = 0 To Terrain.GetLength(0) - 1
-                    combox.Items.Add(Terrain(n, 0))
+                For Each tl As Terrain In WorldMapData.TerrainList
+                    combox.Items.Add(tl.type)
                 Next
                 combox.Text = ListView1.Items(ListView1.FocusedItem.Index).SubItems(c).Text
                 Me.ListView1.Controls.Add(combox)
@@ -38,7 +47,7 @@
             Case 3, 4, 5 'enc percent
                 combox = New ComboBox
                 combox.Name = "InputComBox"
-                combox.Items.AddRange(EncPercent)
+                combox.Items.AddRange(WorldMapData.EncPercent)
                 combox.DropDownStyle = ComboBoxStyle.DropDownList
                 combox.Tag = c
                 combox.BackColor = Color.LightYellow
@@ -60,9 +69,9 @@
                 combox.Location = New Point(x, ListView1.Items(ListView1.FocusedItem.Index).Bounds.Location.Y - 4)
                 combox.Sorted = True
                 AddHandler combox.Leave, AddressOf Me.InputComBoxExit
-                For n = 0 To EncTable.GetLength(0) - 1
-                    combox.Items.Add(EncTable(n, 0))
-                Next
+                'For n = 0 To EncTable.GetLength(0) - 1
+                combox.Items.AddRange(WorldMapData.EncTable.Keys.ToArray)
+                'Next
                 combox.Text = ListView1.Items(ListView1.FocusedItem.Index).SubItems(c).Text
                 Me.ListView1.Controls.Add(combox)
                 combox.Focus()
@@ -87,6 +96,7 @@
     Private Sub InputTexBoxExit()
         texbox.Dispose()
     End Sub
+
     Private Sub InputTexBoxKeyPress(ByVal sender As System.Object, ByVal e As System.Windows.Forms.KeyEventArgs)
         If e.KeyData = Keys.Enter Then
             If texbox.Text <> ListView1.Items(ListView1.FocusedItem.Index).SubItems(texbox.Tag).Text Then
@@ -143,7 +153,7 @@
     Private Sub ListView1_ItemSelectionChanged(ByVal sender As System.Object, ByVal e As System.Windows.Forms.ListViewItemSelectionChangedEventArgs) Handles ListView1.ItemSelectionChanged
         If HighlightToolStripMenuItem.CheckState = CheckState.Checked AndAlso e.IsSelected Then 'AndAlso Not (Highlight)
             'If ItemSel Then
-            HighlightSquare(ListView1.Items(e.ItemIndex).Text, Me.Tag) ' ListView1.FocusedItem.Index
+            Graph.HighlightSquare(ListView1.Items(e.ItemIndex).Text, Me.Tag) ' ListView1.FocusedItem.Index
             '    ItemSel = False
             'Else
             '    ItemSel = True
@@ -162,7 +172,7 @@
         If e.Button = Windows.Forms.MouseButtons.Middle Then
             look_name = ""
             'узнать на какой строке был клик
-            Dim row = GetListViewRowClick(sender, e.Y)
+            Dim row = GetFunction.GetListViewRowClick(sender, e.Y)
             If row > -1 Then look_name = ListView1.Items(row).SubItems(6).Text
         End If
     End Sub
@@ -176,9 +186,8 @@
     End Sub
 
     Private Sub HideSquareShape()
-        If Highlight Then
-            SquareShape.Dispose()
-            Highlight = False
+        If Graph.Highlight Then
+            Graph.Highlight = False
         End If
     End Sub
 

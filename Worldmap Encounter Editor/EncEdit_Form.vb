@@ -1,4 +1,5 @@
 ﻿Public Class EncEdit_Form
+
     Friend attack As String
     Friend target As String
     Friend vs As String
@@ -15,9 +16,9 @@
         target = trgt.Trim
         vs = v_s
         Select Case vs
-            Case "AMBUSH"
+            Case WMData.AMBUSH
                 ComboBox1.SelectedIndex = 1
-            Case "FIGHTING"
+            Case WMData.FIGHTING
                 ComboBox1.SelectedIndex = 2
             Case Else
                 ComboBox1.SelectedIndex = 0
@@ -85,9 +86,9 @@ SkipTarget:
             ListView1.Items(1).SubItems.Add(vbNullString)
         End If
 
-        For n = 0 To Encounter.GetLength(0) - 1
-            ListBox1.Items.Add(Encounter(n, 0))
-        Next
+        'For n = 0 To WorldMapData.Encounter.Count - 1
+        ListBox1.Items.AddRange(WorldMapData.Encounter.Keys.ToArray)
+        'Next
         ListBox1.SelectedIndex = 0
         ListView1.Items(0).Selected = True
         ListBox1.Focus()

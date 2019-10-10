@@ -1,8 +1,11 @@
 ﻿Public Class Main_Form
+
     Private LocationCursor As Point
     Private LocationCursorOffset As Point
     Private LocationPaint As Point
     Private hover_tile As Integer
+
+    Private AreaForm As AreaLocation
 
     Protected Overrides ReadOnly Property CreateParams() As System.Windows.Forms.CreateParams
         Get
@@ -13,8 +16,8 @@
     End Property
 
     Private Sub EnableDoubleBuffering()
-        Me.SetStyle(ControlStyles.DoubleBuffer Or ControlStyles.OptimizedDoubleBuffer Or ControlStyles.UserPaint Or ControlStyles.AllPaintingInWmPaint, True)
-        Me.UpdateStyles()
+        'Me.SetStyle(ControlStyles.DoubleBuffer Or ControlStyles.OptimizedDoubleBuffer Or ControlStyles.UserPaint Or ControlStyles.AllPaintingInWmPaint, True)
+        'Me.UpdateStyles()
     End Sub
 
     Private Sub Main_Form_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
@@ -47,12 +50,12 @@
             Dim y As Integer = e.Y
             'ToolStripStatusLabel4.Text = e.Location.ToString
             On Error GoTo Skip
-            hover_tile = GetXY_Tiles(x, y)
+            hover_tile = Graph.GetXY_Tiles(x, y)
             sender.Tag = hover_tile
             ToolStripStatusLabel2.Text = "X: " & x
             ToolStripStatusLabel3.Text = "Y: " & y
             'нужно вычислить тайл
-            Dim str() As String = GetParamWordMap(x & "_" & y, "[Tile " & hover_tile & "]").Split(",")
+            Dim str As String() = GetFunction.GetParamWordMap(x & "_" & y, "[Tile " & hover_tile & "]").Split(",")
             ToolTip1.ToolTipTitle = str(0) & " [" & str(3) & "]"
             ToolTip1.SetToolTip(sender, "Encounter: " & str(5))
             look_name = str(5)
@@ -95,7 +98,7 @@ Skip:
     End Sub
 
     Private Sub ToolStripButton5_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ToolStripButton5.Click
-        look_name = EncTable(0, 0)
+        look_name = WorldMapData.EncTable.Keys(0).ToString
         CreateEncTableForm()
     End Sub
 
@@ -113,45 +116,39 @@ Skip:
     End Sub
 
     Private Sub ToolStripButton8_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ToolStripButton8.Click
-        If LocShow Then
-            LocShow = False
-            BigPicbox.BackgroundImage = Worldmap_Pic.Clone
-            ShowLayer()
+        If Graph.LocShow Then
+            Graph.LocShow = False
+            Graph.BigPicbox.BackgroundImage = Graph.Worldmap_Pic.Clone
+            Graph.ShowLayer()
         Else
-            ViewAreaLoc()
-            LocShow = True
+            Graph.ViewAreaLoc()
+            Graph.LocShow = True
         End If
-        BigPicbox.Refresh()
+        Graph.BigPicbox.Refresh()
     End Sub
 
     Private Sub ToolStripButton9_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ToolStripButton9.Click
-        If TileShow Then
-            TileShow = False
-            BigPicbox.BackgroundImage = Worldmap_Pic.Clone
-            ShowLayer()
+        If Graph.TileShow Then
+            Graph.TileShow = False
+            Graph.BigPicbox.BackgroundImage = Graph.Worldmap_Pic.Clone
+            Graph.ShowLayer()
         Else
-            ViewTileNumber()
-            TileShow = True
+            Graph.ViewTileNumber()
+            Graph.TileShow = True
         End If
-        BigPicbox.Refresh()
+        Graph.BigPicbox.Refresh()
     End Sub
 
     Private Sub ToolStripButton10_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ToolStripButton10.Click
-        If EncShow Then
-            EncShow = False
-            BigPicbox.BackgroundImage = Worldmap_Pic.Clone
-            ShowLayer()
+        If Graph.EncShow Then
+            Graph.EncShow = False
+            Graph.BigPicbox.BackgroundImage = Graph.Worldmap_Pic.Clone
+            Graph.ShowLayer()
         Else
-            ViewEncType()
-            EncShow = True
+            Graph.ViewEncType()
+            Graph.EncShow = True
         End If
-        BigPicbox.Refresh()
-    End Sub
-
-    Private Sub ShowLayer()
-        If TileShow Then ViewTileNumber()
-        If LocShow Then ViewAreaLoc()
-        If EncShow Then ViewEncType()
+        Graph.BigPicbox.Refresh()
     End Sub
 
     Private Sub Main_Form_Move(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Move
@@ -168,7 +165,7 @@ Skip:
     Private Sub ToolStripMenuItem6_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ToolStripMenuItem6.Click
         If ToolStripMenuItem6.CheckState = CheckState.Unchecked Then
             ToolStripMenuItem6.CheckState = CheckState.Checked
-            ZoomMap = 2
+            Graph.ZoomMap = 2
             ClearCheckState(50)
         End If
     End Sub
@@ -176,7 +173,7 @@ Skip:
     Private Sub ToolStripMenuItem5_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ToolStripMenuItem5.Click
         If ToolStripMenuItem5.CheckState = CheckState.Unchecked Then
             ToolStripMenuItem5.CheckState = CheckState.Checked
-            ZoomMap = 1.5
+            Graph.ZoomMap = 1.5
             ClearCheckState(65)
         End If
     End Sub
@@ -184,7 +181,7 @@ Skip:
     Private Sub ToolStripMenuItem4_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ToolStripMenuItem4.Click
         If ToolStripMenuItem4.CheckState = CheckState.Unchecked Then
             ToolStripMenuItem4.CheckState = CheckState.Checked
-            ZoomMap = 1.25
+            Graph.ZoomMap = 1.25
             ClearCheckState(80)
         End If
     End Sub
@@ -192,7 +189,7 @@ Skip:
     Private Sub ToolStripMenuItem3_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ToolStripMenuItem3.Click
         If ToolStripMenuItem3.CheckState = CheckState.Unchecked Then
             ToolStripMenuItem3.CheckState = CheckState.Checked
-            ZoomMap = 1.15
+            Graph.ZoomMap = 1.15
             ClearCheckState(90)
         End If
     End Sub
@@ -200,7 +197,7 @@ Skip:
     Private Sub ToolStripMenuItem2_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ToolStripMenuItem2.Click
         If ToolStripMenuItem2.CheckState = CheckState.Unchecked Then
             ToolStripMenuItem2.CheckState = CheckState.Checked
-            ZoomMap = 1.0
+            Graph.ZoomMap = 1.0
             ClearCheckState(100)
         End If
     End Sub
@@ -212,13 +209,13 @@ Skip:
         If zoom <> 90 Then ToolStripMenuItem3.CheckState = CheckState.Unchecked
         If zoom <> 100 Then ToolStripMenuItem2.CheckState = CheckState.Unchecked
         'redraw map
-        ReSizeMap()
+        Graph.ReSizeMap()
     End Sub
 #End Region
 
     Private Sub ToolStripButton1_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ToolStripButton1.Click
         'Panel1.Visible = Not Panel1.Visible
-        BigPicbox.Visible = Not BigPicbox.Visible
+        Graph.BigPicbox.Visible = Not Graph.BigPicbox.Visible
     End Sub
 
     Private Sub ToolStrip1_MouseEnter(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ToolStrip1.MouseEnter
@@ -232,9 +229,10 @@ Skip:
     Private Sub ОткрытьToolStripButton_ButtonClick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ОткрытьToolStripButton.ButtonClick
         FolderBrowserDialog1.Description = "Please select game folder:"
         FolderBrowserDialog1.ShowNewFolderButton = False
-        FolderBrowserDialog1.RootFolder = Environment.SpecialFolder.MyComputer
+        'FolderBrowserDialog1.RootFolder = Environment.SpecialFolder.MyComputer
+        FolderBrowserDialog1.SelectedPath = Game_path
         If FolderBrowserDialog1.ShowDialog = Windows.Forms.DialogResult.OK Then
-            Start_Main(FolderBrowserDialog1.SelectedPath)
+            LoadData(FolderBrowserDialog1.SelectedPath)
             ToolStripStatusLabel4.Text = "Folder: " & FolderBrowserDialog1.SelectedPath
             If GlobalError > -1 Then Exit Sub
             ActiveMenu()
@@ -263,10 +261,20 @@ Skip:
         TileDataConfigToolStripMenuItem.Enabled = True
     End Sub
 
-
     Private Sub Main_Form_FormClosed(ByVal sender As System.Object, ByVal e As System.Windows.Forms.FormClosedEventArgs) Handles MyBase.FormClosed
         On Error Resume Next
         My.Computer.FileSystem.DeleteDirectory(Application.StartupPath & "\wm_res\art", FileIO.DeleteDirectoryOption.DeleteAllContents)
         My.Computer.FileSystem.DeleteDirectory(Application.StartupPath & "\wm_res\data", FileIO.DeleteDirectoryOption.DeleteAllContents)
     End Sub
+
+    Private Sub ToolStripButton6_Click_1(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ToolStripButton6.Click
+        If AreaForm Is Nothing Then
+            AreaForm = New AreaLocation()
+            AddHandler AreaForm.FormClosed, Sub() AreaForm = Nothing
+            AreaForm.Show(Me)
+        Else
+            AreaForm.WindowState = FormWindowState.Normal
+        End If
+    End Sub
+
 End Class

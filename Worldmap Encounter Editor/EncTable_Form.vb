@@ -1,4 +1,5 @@
 ﻿Public Class EncTable_Form
+
     Private texbox As TextBox
     Private combox As ComboBox
     Private numbox As NumericUpDown
@@ -29,9 +30,11 @@
     Private Sub EditToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles EditToolStripMenuItem.Click
         Dim EncEditFrm As New EncEdit_Form
         EncEditFrm.Tag = ListView1.FocusedItem.Index
+
         Dim attack As String = ListView1.Items(ListView1.FocusedItem.Index).SubItems(2).Text
         Dim target As String = ListView1.Items(ListView1.FocusedItem.Index).SubItems(4).Text
         Dim vs As String = ListView1.Items(ListView1.FocusedItem.Index).SubItems(3).Text
+
         ComboBox1.Enabled = False
         OK_Button.Visible = False
         numFrm += 1
@@ -64,7 +67,7 @@
     Private Sub ComboBox1_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ComboBox1.SelectedIndexChanged
         If Me.Visible Then
             ListView1.Items.Clear()
-            ShowEncTableData(ComboBox1.SelectedIndex, Me)
+            WorldMapData.ShowEncTableData(ComboBox1.SelectedIndex, Me)
         End If
     End Sub
 
@@ -72,7 +75,7 @@
         Dim x, c As Integer
         x = e.X
         'узнать на каком столбце был клик
-        c = GetListViewColClick(sender, x)
+        c = GetFunction.GetListViewColClick(sender, x)
         'Or c = 0 запрет на редактирование первой колонки
         If c = -1 Then Exit Sub
         Select Case c
@@ -93,7 +96,7 @@
             Case 3 ' VS
                 combox = New ComboBox
                 combox.Name = "InputComBox"
-                combox.Items.AddRange({"-", "AMBUSH", "FIGHTING"})
+                combox.Items.AddRange({"-", WMData.AMBUSH, WMData.FIGHTING})
                 combox.DropDownStyle = ComboBoxStyle.DropDownList
                 combox.Tag = c
                 combox.BackColor = Color.LightYellow
@@ -108,7 +111,7 @@
                 combox = New ComboBox
                 combox.Name = "InputComBox"
                 combox.Items.Add("")
-                combox.Items.AddRange(MapsName)
+                combox.Items.AddRange(MapsName.ToArray)
                 combox.DropDownStyle = ComboBoxStyle.DropDownList
                 combox.MaxDropDownItems = 20
                 combox.DropDownWidth = 175
@@ -225,10 +228,10 @@
 
     Private Sub ListView1_MouseDown(ByVal sender As System.Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles ListView1.MouseDown
         If e.Button = Windows.Forms.MouseButtons.Middle Then
-            Dim row As Integer = GetListViewRowClick(sender, e.Y)
+            Dim row As Integer = GetFunction.GetListViewRowClick(sender, e.Y)
             col = -1
             If row = -1 Then Exit Sub
-            col = GetListViewColClick(sender, e.X)
+            col = GetFunction.GetListViewColClick(sender, e.X)
         End If
     End Sub
 

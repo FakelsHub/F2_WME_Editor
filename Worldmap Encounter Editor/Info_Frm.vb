@@ -21,11 +21,11 @@
     End Sub
 
     Private Sub Info_Frm_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
-        Label1.Text &= Get_PercentEnc("Forced") & "%"
-        Label2.Text &= Get_PercentEnc("Frequent") & "%"
-        Label3.Text &= Get_PercentEnc("Common") & "%"
-        Label4.Text &= Get_PercentEnc("Uncommon") & "%"
-        Label5.Text &= Get_PercentEnc("Rare") & "%"
-        Label6.Text &= Get_PercentEnc("None") & "%"
+        Label1.Text &= WorldMapData.GetPercentEnc(WorldMapData.EncPercent(0)) & "%"
+        Label2.Text &= WorldMapData.GetPercentEnc(WorldMapData.EncPercent(1)) & "%"
+        Label3.Text &= WorldMapData.GetPercentEnc(WorldMapData.EncPercent(2)) & "%"
+        Label4.Text &= WorldMapData.GetPercentEnc(WorldMapData.EncPercent(3)) & "%"
+        Label5.Text &= WorldMapData.GetPercentEnc(WorldMapData.EncPercent(4)) & "%"
+        Label6.Text &= WorldMapData.GetPercentEnc(WorldMapData.EncPercent(5)) & "%"
     End Sub
 End Class

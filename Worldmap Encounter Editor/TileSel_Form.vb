@@ -1,7 +1,9 @@
 ﻿Public Class TileSel_Form
 
     Private Sub TileSel_Form_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
-        ListBox1.Items.AddRange(TileName)
+        For Each td As Tile In WorldMapData.TilesData
+            ListBox1.Items.Add(td.TileName)
+        Next
         ListBox1.SelectedIndex = 0
     End Sub
 
@@ -23,6 +25,6 @@
     End Sub
 
     Private Sub TileSel_Form_Deactivate(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Deactivate
-        If BigPicbox.Visible Then Me.Opacity = 0.5
+        If Graph.BigPicbox.Visible Then Me.Opacity = 0.5
     End Sub
 End Class
